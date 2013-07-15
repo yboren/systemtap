@@ -1,0 +1,24 @@
+#!/usr/bin/stap
+
+global locations
+
+probe begin {
+	printf("Monitoring for drop packets\n")
+}
+
+probe end {
+	printf("Stopping dropped packets monitor\n")
+}
+
+probe kernel.trace("kfree_skb") {
+	locations[$location] <<< 1
+}
+
+probe timer.sec(5) {
+	printf("\n")
+	foreach( l in locations-) {
+		printf("%d packets dropped at location %p\n",
+				@count(locations[l]), l)
+	}
+	delete locations
+}
