@@ -1,0 +1,4 @@
+probe syscall.* {
+	if(pid() == target())
+		printf("%s\n", name)
+}

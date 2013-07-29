@@ -1,0 +1,2 @@
+probe kernel.function("*@net/socket.c") {}
+probe kernel.function("*@net/socket.c").return {}

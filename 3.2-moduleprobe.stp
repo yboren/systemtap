@@ -1,0 +1,2 @@
+probe module("ext4").function("*") {}
+probe module("ext4").function("*").return {}

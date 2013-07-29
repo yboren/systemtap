@@ -1,0 +1,4 @@
+probe timer.s(4)
+{
+	printf("hello world!\n")
+}
