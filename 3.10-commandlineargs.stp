@@ -1,0 +1,2 @@
+probe kernel.function(@1) {}
+probe kernel.function(@1).return {}
