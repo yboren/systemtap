@@ -1,0 +1,1 @@
+delta = gettimeofday_s() - foo[tid()]

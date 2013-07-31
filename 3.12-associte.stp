@@ -1,0 +1,1 @@
+foo[tid()] = gettimeofday_s()

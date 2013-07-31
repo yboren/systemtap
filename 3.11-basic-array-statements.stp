@@ -1,0 +1,3 @@
+foo["tom"] = 23
+foo["dick"] = 24
+foo["harry"] = 25
