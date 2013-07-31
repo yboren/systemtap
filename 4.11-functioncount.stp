@@ -1,0 +1,18 @@
+#!/usr/bin/env stap
+# The following line command will probe all the fucntions in kernel's memory
+# management code
+#
+# stap functinocount.stp "*@mm/*.c"
+
+probe kernel.function(@1).call { #probe functions list on commandline
+	called[probefunc()] <<< 1
+}
+
+global called
+
+probe end {
+	foreach(fn in called-) # sort by call count(in decreasing order)
+	#		(fn+ in called) # sort by function name
+		printf("%s %d\n", fn, @count(called[fn]))
+	exit()
+}
