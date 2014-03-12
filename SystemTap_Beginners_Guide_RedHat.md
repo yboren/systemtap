@@ -18,6 +18,45 @@ SystemTap提供一些底层的支持，可以监控正在运行的内核的细�
 *提供预先写好的SystemTap脚本，这些脚本涵盖到了监测系统各个组件，并分析这些脚本的功能以及介绍如何编写这些脚本。
 
 SystemTap的能力
+--------------
 
 *灵活性：SystemTap可以让用户只需要开发简单的脚本，就可以做到查看和监控内核空间的各种事件，包括内核函数，系统调用等。从这点上来说，SystemTap其实已经超越了工具的范畴，它更像一个系统，来帮助用户开发内核相关的分析监控工具。
 *易用性：正如前面提到的，SystemTap中允许用户编写脚本就能做到探测内核空间的事件，而不必做那些繁琐的修改内核代码，编译，安装，并重新启动内核的事情。
+
+使用SystemTap
+============
+
+安装SystemTap
+------------
+
+SystemTap需要安装以下RPM：
+
+*systemtap
+*systemtap-runtime
+如果系统包含yum工具，可以这样 yum install systemtap systemtap-runtime。
+
+接下来安装SystemTap依赖的内核的RPM。
+
+SystemTap依赖的内核包包括以-devel,，-debuginfo和 -debuginfo-common-arch结尾的RPM。例如对于vanilla内核，需要安装的包如下：
+
+*kernel-debuginfo
+*kernel-debuginfo-common-arch
+*kernel-devel
+如果内核支持PAE，需要安装kernel-PAE-debuginfo，kernel-PAE-debuginfo-common-arch和kernel-PAE-devel。
+
+初始测试
+-------
+
+如果SystemTap依赖的内核已经启用，那么就可以做一些测试确保SystemTap已经安装正确。否则就要使用正确的内核重新启动机器。
+
+测试可以运行命令：stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'只要检测到有一个VFS的读操作，SystemTap就打印一个read performed，然后正常退出。如果SystemTap安装成功，你应该得到类似下面的输出：
+
+>Pass 1: parsed user script and 45 library script(s) in 340usr/0sys/358real ms.
+>Pass 2: analyzed script: 1 probe(s), 1 function(s), 0 embed(s), 0 global(s) in 290usr/260sys/568real ms.
+>Pass 3: translated to C into "/tmp/stapiArgLX/stap_e5886fa50499994e6a87aacdc43cd392_399.c" in 490usr/430sys/938real ms.
+>Pass 4: compiled C into "stap_e5886fa50499994e6a87aacdc43cd392_399.ko" in 3310usr/430sys/3714real ms.
+>Pass 5: starting run.
+>read performed
+>Pass 5: run completed in 10usr/40sys/73real ms.
+
+最后三行的输出（即以Pass 5开始的行 ）表明，SystemTap能够成功地创建内核探针，运行探测，检测到被探测的事件（这里是VFS的读取动作），并执行一个事先定义的处理程序（打印文本，然后将其关闭，并且没有任何错误）。
