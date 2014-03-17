@@ -72,3 +72,16 @@ SystemTap依赖的内核包包括以-devel,，-debuginfo和 -debuginfo-common-ar
 
 *一个主机可以安装适合各种机器的调试信息包
 *其它机器只需要安装systemtap-runtime，就可以运行主机生成的SystemTap的内核模块
+
+运行SystemTap脚本
+----------------
+
+可以使用命令stap运行SystemTap脚本，stap命令可以从标准输入或者文件读入脚本运行。
+
+运行stap和staprun需要系统的root权限。然而，并不是所有的用户都有root权限的，有时一个非特权用户可能需要到他们的机器上运行SystemTap模块。
+
+为了让普通用户在没有root权限的情况下能够运行SystemTap模块，可以将它们添加到stapdev用户组，该组的成员可以使用stap运行SystemTap脚本或staprun运行SystemTap模块。
+
+这里说的运行stap包括编译SystemTap脚本成内核模块，然后加载到内核。这个操作需要root权限，stapdev组的成员拥有这个权限，相当于拥有root权限，因此只把可以信任的用户加为stapdev组的成员。
+
+另外还有个stapusr组，该组的成员只能使用staprun运行SystemTap模块。而且模块必须位于这个目录/lib/modules/kernel_version/systemtap/（注意，此目录必须只能由root用户拥有，而且必须只能由root用户可写）。
