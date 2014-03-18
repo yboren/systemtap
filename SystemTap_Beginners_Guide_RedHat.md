@@ -52,11 +52,17 @@ SystemTap依赖的内核包包括以-devel,，-debuginfo和 -debuginfo-common-ar
 测试可以运行命令：stap -v -e 'probe vfs.read {printf("read performed\n"); exit()}'只要检测到有一个VFS的读操作，SystemTap就打印一个read performed，然后正常退出。如果SystemTap安装成功，你应该得到类似下面的输出：
 
 >Pass 1: parsed user script and 45 library script(s) in 340usr/0sys/358real ms.
+
 >Pass 2: analyzed script: 1 probe(s), 1 function(s), 0 embed(s), 0 global(s) in 290usr/260sys/568real ms.
+
 >Pass 3: translated to C into "/tmp/stapiArgLX/stap_e5886fa50499994e6a87aacdc43cd392_399.c" in 490usr/430sys/938real ms.
+
 >Pass 4: compiled C into "stap_e5886fa50499994e6a87aacdc43cd392_399.ko" in 3310usr/430sys/3714real ms.
+
 >Pass 5: starting run.
+
 >read performed
+
 >Pass 5: run completed in 10usr/40sys/73real ms.
 
 最后三行的输出（即以Pass 5开始的行 ）表明，SystemTap能够成功地创建内核探针，运行探测，检测到被探测的事件（这里是VFS的读取动作），并执行一个事先定义的处理程序（打印文本，然后将其关闭，并且没有任何错误）。
@@ -85,3 +91,12 @@ SystemTap依赖的内核包包括以-devel,，-debuginfo和 -debuginfo-common-ar
 这里说的运行stap包括编译SystemTap脚本成内核模块，然后加载到内核。这个操作需要root权限，stapdev组的成员拥有这个权限，相当于拥有root权限，因此只把可以信任的用户加为stapdev组的成员。
 
 另外还有个stapusr组，该组的成员只能使用staprun运行SystemTap模块。而且模块必须位于这个目录/lib/modules/kernel_version/systemtap/（注意，此目录必须只能由root用户拥有，而且必须只能由root用户可写）。
+
+了解SystemTap的工作原理
+=======================
+
+编写SystemTap脚本可以实现多种多样的功能，比如提取和过滤数据，分析诊断复杂的问题等等。
+
+SystemTap脚本有两个关键概念：事件和事件处理程序。当SystemTap脚本运行的时候，SystemTap监控特定事件的发生，当事件发生时，linux内核就会执行事先定义好的事件处理程序，执行完后再恢复内核的正常运行。
+
+常见的事件有这么种：函数的进入和退出，定时器超时，会话结束等。而事件处理程序就是一系列脚本语句组成的代码块，在事件发生时执行。事件处理程序通常要干的事情包括从事件上下文中提取数据，存储在内部变量，做一些统计计算，打印处理结果。
