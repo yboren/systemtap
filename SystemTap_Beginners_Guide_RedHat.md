@@ -147,3 +147,27 @@ SystemTap中的事件可分成两大类，同步事件和异步事件。
 同步事件
 
 任意一个程序在特定的内核探测点执行了一条指令，就产生了一个同步事件。
+
+同步事件的例子
+
+syscall.system_call 系统调用的入口，如果要表示出口，则在后面加一个.return。例如系统调用close，则syscall.close表示进入系统调用的事件，syscall.close.return表示退出系统调用的事件。
+
+vfs.file_operation 文件系统操作的入口，加.return表示出口。
+
+kernel.funtion("function") 内核函数的入口，加.return表示出口。比如kernel.function("sys_open")，就是在其它线程调用sys_open时发生的。
+
+定义事件时，也可以使用通配符，比如*，像这样
+
+```
+probe kernel.function("*@net/socket.c") {}
+probe kernel.function("*@net/socket.c").return {}
+```
+
+kernel.trace("tracepoint") 静态探测点。新的内核（从2.6.30往上）包含了一些特定的探测点，比如kernel.trace("kfree_skb")，描述了内核释放一个网络包缓冲区的事件。
+
+module("module").function("function") 内核模块内的函数探测点。
+
+```
+probe module("ext3").function("*") {}
+probe module("ext3").function("*").return {}
+```
